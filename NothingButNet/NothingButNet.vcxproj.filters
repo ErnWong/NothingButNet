@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="include\API.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -45,6 +42,7 @@
     <None Include="firmware\uniflash.jar" />
     <None Include="firmware\cortex.ld" />
     <None Include="firmware\STM32F10x.ld" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="firmware\libccos.a" />

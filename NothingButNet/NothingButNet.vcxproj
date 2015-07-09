@@ -50,9 +50,6 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="include\API.h" />
     <ClInclude Include="include\main.h" />
   </ItemGroup>
@@ -69,6 +66,7 @@
     <None Include="firmware\STM32F10x.ld" />
     <None Include="firmware\uniflash.jar" />
     <None Include="Makefile" />
+    <None Include="README.md" />
     <None Include="src\Makefile" />
   </ItemGroup>
   <ItemGroup>
