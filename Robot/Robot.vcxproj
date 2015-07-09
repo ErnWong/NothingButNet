@@ -13,7 +13,6 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E31065EC-B30E-455A-8CA8-5EC20D692E80}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>
-    <ProjectName>Robot</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -51,6 +50,9 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\API.h" />
     <ClInclude Include="include\main.h" />
   </ItemGroup>
@@ -67,7 +69,6 @@
     <None Include="firmware\STM32F10x.ld" />
     <None Include="firmware\uniflash.jar" />
     <None Include="Makefile" />
-    <None Include="README.md" />
     <None Include="src\Makefile" />
   </ItemGroup>
   <ItemGroup>

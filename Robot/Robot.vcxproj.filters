@@ -42,9 +42,11 @@
     <None Include="firmware\uniflash.jar" />
     <None Include="firmware\cortex.ld" />
     <None Include="firmware\STM32F10x.ld" />
-    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="firmware\libccos.a" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="README.md" />
   </ItemGroup>
 </Project>
