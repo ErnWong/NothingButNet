@@ -1,7 +1,6 @@
 #include "flywheel.h"
 
 #include <API.h>
-#include "lowpass.h"
 #include "utils.h"
 
 
@@ -41,6 +40,7 @@ typedef struct FlywheelData
 
 	float gain;		// Gain proportional constant for integrating controller.
 	float gearing;		// Ratio of flywheel RPM per encoder RPM.
+	float smoothing;		// Amount of smoothing applied to the flywheel RPM, which is the low-pass filter time constant in seconds.
 
 	bool ready;
 	unsigned long delay;
@@ -48,7 +48,6 @@ typedef struct FlywheelData
 	Mutex targetMutex;		// Mutex for updating the target speed.
 	TaskHandle task;		// Handle to the controlling task.
 	Encoder encoder;		// Encoder used to measure the rpm.
-	LowPass filter;		// Low-pass filter used to filter the measured rpm.
 }
 FlywheelData;
 
@@ -88,6 +87,7 @@ Flywheel flywheelInit(FlywheelSetup setup)
 
 	data->gain = setup.gain;
 	data->gearing = setup.gearing;
+	data->smoothing = setup.smoothing;
 
 	data->ready = true;
 	data->delay = FLYWHEEL_READY_DELAY;
@@ -95,7 +95,6 @@ Flywheel flywheelInit(FlywheelSetup setup)
 	data->targetMutex = mutexCreate();
 	data->task = taskCreate(task, 1000000, data, FLYWHEEL_READY_PRIORITY);	// TODO: What stack size should be set?
 	data->encoder = encoderInit(setup.encoderPortTop, setup.encoderPortBottom, setup.encoderReverse);
-	data->filter = lowPassInit(setup.smoothing);
 
 	return (Flywheel)data;
 }
@@ -164,10 +163,12 @@ void measure(FlywheelData *data)
 {
 	int reading = encoderGet(data->encoder);
 	float rpm = (reading - data->reading) / 360 * data->gearing / data->timeChange;
-	float oldMeasured = data->measured;
+	
+	// low-pass filter
+	float measureChange = (rpm - data->measured) * data->timeChange / data->smoothing;
 
-	data->measured = lowPassUpdate(data->filter, rpm);
-	data->derivative = (data->measured - oldMeasured) / data->timeChange;
+	data->measured += measureChange;
+	data->derivative = measureChange / data->timeChange;
 }
 
 

@@ -43,10 +43,9 @@ float lowPassUpdate(LowPass filter, float input)
 
 	float timeChange = timeUpdate(&data->microTime);
 	float factor = timeChange / (data->timeConstant + timeChange);
-	float output = input * factor + data->out * (1 - factor);
+	data->out += (input - data->out) * factor;
 
-	data->out = output;
-	return output;
+	return data->out;
 }
 
 
