@@ -26,7 +26,7 @@
 // (private)
 // The state, parameters, and working variables of a flywheel.
 //
-typedef struct FlywheelData
+typedef struct FlywheelData		// TODO: look at packing and alignment
 {
 	// Controller state
 
@@ -182,6 +182,7 @@ void measure(FlywheelData *data)
 	// Low-pass filter
 	float measureChange = (rpm - data->measured) * data->timeChange / data->smoothing;
 
+	// Update
 	data->reading = reading;
 	data->measured += measureChange;
 	data->derivative = measureChange / data->timeChange;
@@ -196,11 +197,12 @@ void measure(FlywheelData *data)
 //
 void controllerUpdate(FlywheelData *data)
 {
+	// Calculate error
 	mutexTake(data->targetMutex, -1);	// TODO: Find out what block time is suitable, or needeed at all.
 	data->error = data->measured - data->target;
 	mutexGive(data->targetMutex);
 
-	// Integral controller
+	// Integrate
 	data->action += data->timeChange * data->gain * data->error;	// TODO: try take-back-half controller.
 }
 
@@ -234,10 +236,10 @@ void checkReady(FlywheelData *data)
 //
 void activate(FlywheelData *data)
 {
-	data->ready = true;
-	data->delay = FLYWHEEL_READY_DELAY;
-	taskPrioritySet(data->task, FLYWHEEL_READY_PRIORITY);
-	// TODO: Signal ready?
+	data->ready = false;
+	data->delay = FLYWHEEL_ACTIVE_DELAY;
+	taskPrioritySet(data->task, FLYWHEEL_ACTIVE_PRIORITY);
+	// TODO: Signal not ready?
 }
 
 
@@ -247,8 +249,8 @@ void activate(FlywheelData *data)
 //
 void readify(FlywheelData *data)
 {
-	data->ready = false;
-	data->delay = FLYWHEEL_ACTIVE_DELAY;
-	taskPrioritySet(data->task, FLYWHEEL_ACTIVE_PRIORITY);
-	// TODO: Signal not ready?
+	data->ready = true;
+	data->delay = FLYWHEEL_READY_DELAY;
+	taskPrioritySet(data->task, FLYWHEEL_READY_PRIORITY);
+	// TODO: Signal ready?
 }
