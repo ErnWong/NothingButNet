@@ -8,16 +8,16 @@
 
 // TODO: tune success intervals, priorities, and checking period.
 
-#define FLYWHEEL_READY_ERROR_INTERVAL 1.0f
-#define FLYWHEEL_READY_DERIVATIVE_INTERVAL 1.0f
+#define FLYWHEEL_READY_ERROR_INTERVAL 1.0f		// The +/- interval for which the error needs to lie to be considered 'ready'.
+#define FLYWHEEL_READY_DERIVATIVE_INTERVAL 1.0f		// The +/- interval for which the measured derivative needs to lie to be considered 'ready'.
 
-#define FLYWHEEL_ACTIVE_PRIORITY 3
-#define FLYWHEEL_READY_PRIORITY 2
+#define FLYWHEEL_ACTIVE_PRIORITY 3		// Priority of the update task during active mode
+#define FLYWHEEL_READY_PRIORITY 2		// Priority of the update task during ready mode
 
-#define FLYWHEEL_ACTIVE_DELAY 20
-#define FLYWHEEL_READY_DELAY 200
+#define FLYWHEEL_ACTIVE_DELAY 20		// Delay for each update during active mode
+#define FLYWHEEL_READY_DELAY 200		// Delay for each update during ready mode
 
-#define FLYWHEEL_CHECK_READY_PERIOD 20
+#define FLYWHEEL_CHECK_READY_PERIOD 20		// Number of updates before rechecking its ready state
 
 
 
@@ -28,22 +28,33 @@
 //
 typedef struct FlywheelData
 {
+	// Controller state
+
 	float target;		// Target speed in rpm.
 	float measured;		// Measured speed in rpm.
 	float derivative;	// Rate at which the measured speed had changed.
 	float error;		// Difference in the target and the measured speed in rpm.
 	float action;		// Controller output sent to the (smart) motors.
 
+	// Measuring and time
+
 	int reading;		// Previous encoder value.
 	unsigned long microTime;		// The time in microseconds of the last update.
 	float timeChange;		// The time difference between updates, in seconds.
 
+	// Parameters
+
 	float gain;		// Gain proportional constant for integrating controller.
 	float gearing;		// Ratio of flywheel RPM per encoder RPM.
+	float encoderTicksPerRevolution;		// Number of ticks each time the encoder completes one revolution
 	float smoothing;		// Amount of smoothing applied to the flywheel RPM, which is the low-pass filter time constant in seconds.
 
-	bool ready;
+	// Mode
+
+	bool ready;		// Whether the controller is in ready mode (true, flywheel at the right speed) or active mode (false), which affects task priority and update rate.
 	unsigned long delay;
+
+	// Other
 
 	Mutex targetMutex;		// Mutex for updating the target speed.
 	TaskHandle task;		// Handle to the controlling task.
@@ -87,6 +98,7 @@ Flywheel flywheelInit(FlywheelSetup setup)
 
 	data->gain = setup.gain;
 	data->gearing = setup.gearing;
+	data->encoderTicksPerRevolution = setup.encoderTicksPerRevolution;
 	data->smoothing = setup.smoothing;
 
 	data->ready = true;
@@ -125,15 +137,15 @@ void flywheelSet(Flywheel flywheel, float speed)
 void task(void *flywheel)
 {
 	FlywheelData *data = flywheel;
-	int tick = 0;
+	int i = 0;
 	while (1)
 	{
-		tick = FLYWHEEL_CHECK_READY_PERIOD;
-		while (tick)
+		i = FLYWHEEL_CHECK_READY_PERIOD;
+		while (i)
 		{
 			update(data);
 			delay(data->delay);
-			--tick;
+			--i;
 		}
 		checkReady(data);
 	}
@@ -156,17 +168,21 @@ void update(FlywheelData *data)
 //
 // (private)
 // Function: Measures the RPM of the flywheel, and the rate it changes.
-// Implementation: encoder change -> rpm -> low-pass filter
-// Requires: timeChange
+// Implement: encoder change -> rpm -> low-pass filter
+// Requires: timeChange (preferably calculated immediately before this function)
 //
 void measure(FlywheelData *data)
 {
 	int reading = encoderGet(data->encoder);
-	float rpm = (reading - data->reading) / 360 * data->gearing / data->timeChange;
+	int ticks = reading - data->reading;
+
+	// Raw rpm
+	float rpm = ticks / data->encoderTicksPerRevolution * data->gearing / data->timeChange;
 	
-	// low-pass filter
+	// Low-pass filter
 	float measureChange = (rpm - data->measured) * data->timeChange / data->smoothing;
 
+	data->reading = reading;
 	data->measured += measureChange;
 	data->derivative = measureChange / data->timeChange;
 }
@@ -175,7 +191,7 @@ void measure(FlywheelData *data)
 //
 // (private)
 // Function: Calculates the error, and the action required to minimise the error.
-// Implementation: Proportionally integral controller.
+// Implement: Proportionally integral controller.
 // Requires: timeChange, measured
 //
 void controllerUpdate(FlywheelData *data)
@@ -183,6 +199,8 @@ void controllerUpdate(FlywheelData *data)
 	mutexTake(data->targetMutex, -1);	// TODO: Find out what block time is suitable, or needeed at all.
 	data->error = data->measured - data->target;
 	mutexGive(data->targetMutex);
+
+	// Integral controller
 	data->action += data->timeChange * data->gain * data->error;	// TODO: try take-back-half controller.
 }
 
@@ -190,7 +208,7 @@ void controllerUpdate(FlywheelData *data)
 //
 // (private)
 // Function: Checks if flywheel should be ready or active, and changes the flywhee's state if necessary.
-// Implementation: Checks whether the RPM and its derivative are within their respective ready intervals.
+// Implement: Checks whether the RPM and its derivative are within their respective ready intervals.
 // Requires: error, derivative
 //
 void checkReady(FlywheelData *data)
