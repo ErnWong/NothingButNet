@@ -55,7 +55,6 @@
   <ItemGroup>
     <ClInclude Include="include\API.h" />
     <ClInclude Include="include\flywheel.h" />
-    <ClInclude Include="include\lowpass.h" />
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\utils.h" />
   </ItemGroup>
@@ -63,7 +62,6 @@
     <ClCompile Include="src\auto.c" />
     <ClCompile Include="src\flywheel.c" />
     <ClCompile Include="src\init.c" />
-    <ClCompile Include="src\lowpass.c" />
     <ClCompile Include="src\opcontrol.c" />
     <ClCompile Include="src\utils.c" />
   </ItemGroup>

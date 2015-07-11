@@ -46,7 +46,6 @@
 #include <API.h>
 
 #include "utils.h"
-#include "lowpass.h"
 #include "flywheel.h"
 
 // Allow usage of this file in C++ programs
