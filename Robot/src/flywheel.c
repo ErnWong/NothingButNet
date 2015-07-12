@@ -8,16 +8,16 @@
 
 // TODO: tune success intervals, priorities, and checking period.
 
-#define FLYWHEEL_READY_ERROR_INTERVAL 1.0f		// The +/- interval for which the error needs to lie to be considered 'ready'.
-#define FLYWHEEL_READY_DERIVATIVE_INTERVAL 1.0f		// The +/- interval for which the measured derivative needs to lie to be considered 'ready'.
+#define FLYWHEEL_READY_ERROR_INTERVAL 1.0f      // The +/- interval for which the error needs to lie to be considered 'ready'.
+#define FLYWHEEL_READY_DERIVATIVE_INTERVAL 1.0f // The +/- interval for which the measured derivative needs to lie to be considered 'ready'.
 
-#define FLYWHEEL_ACTIVE_PRIORITY 3		// Priority of the update task during active mode
-#define FLYWHEEL_READY_PRIORITY 2		// Priority of the update task during ready mode
+#define FLYWHEEL_ACTIVE_PRIORITY 3              // Priority of the update task during active mode
+#define FLYWHEEL_READY_PRIORITY 2               // Priority of the update task during ready mode
 
-#define FLYWHEEL_ACTIVE_DELAY 20		// Delay for each update during active mode
-#define FLYWHEEL_READY_DELAY 200		// Delay for each update during ready mode
+#define FLYWHEEL_ACTIVE_DELAY 20                // Delay for each update during active mode
+#define FLYWHEEL_READY_DELAY 200                // Delay for each update during ready mode
 
-#define FLYWHEEL_CHECK_READY_PERIOD 20		// Number of updates before rechecking its ready state
+#define FLYWHEEL_CHECK_READY_PERIOD 20          // Number of updates before rechecking its ready state
 
 
 
@@ -28,37 +28,28 @@
 //
 typedef struct FlywheelData		// TODO: look at packing and alignment
 {
-	// Controller state
 
-	float target;		// Target speed in rpm.
-	float measured;		// Measured speed in rpm.
-	float derivative;	// Rate at which the measured speed had changed.
-	float error;		// Difference in the target and the measured speed in rpm.
-	float action;		// Controller output sent to the (smart) motors.
+	float target;                       // Target speed in rpm.
+	float measured;                     // Measured speed in rpm.
+	float derivative;                   // Rate at which the measured speed had changed.
+	float error;                        // Difference in the target and the measured speed in rpm.
+	float action;                       // Controller output sent to the (smart) motors.
 
-	// Measuring and time
+	int reading;                        // Previous encoder value.
+	unsigned long microTime;            // The time in microseconds of the last update.
+	float timeChange;                   // The time difference between updates, in seconds.
 
-	int reading;		// Previous encoder value.
-	unsigned long microTime;		// The time in microseconds of the last update.
-	float timeChange;		// The time difference between updates, in seconds.
+	float gain;                         // Gain proportional constant for integrating controller.
+	float gearing;                      // Ratio of flywheel RPM per encoder RPM.
+	float encoderTicksPerRevolution;    // Number of ticks each time the encoder completes one revolution
+	float smoothing;                    // Amount of smoothing applied to the flywheel RPM, which is the low-pass filter time constant in seconds.
 
-	// Parameters
-
-	float gain;		// Gain proportional constant for integrating controller.
-	float gearing;		// Ratio of flywheel RPM per encoder RPM.
-	float encoderTicksPerRevolution;		// Number of ticks each time the encoder completes one revolution
-	float smoothing;		// Amount of smoothing applied to the flywheel RPM, which is the low-pass filter time constant in seconds.
-
-	// Mode
-
-	bool ready;		// Whether the controller is in ready mode (true, flywheel at the right speed) or active mode (false), which affects task priority and update rate.
+	bool ready;                         // Whether the controller is in ready mode (true, flywheel at the right speed) or active mode (false), which affects task priority and update rate.
 	unsigned long delay;
 
-	// Other
-
-	Mutex targetMutex;		// Mutex for updating the target speed.
-	TaskHandle task;		// Handle to the controlling task.
-	Encoder encoder;		// Encoder used to measure the rpm.
+	Mutex targetMutex;                  // Mutex for updating the target speed.
+	TaskHandle task;                    // Handle to the controlling task.
+	Encoder encoder;                    // Encoder used to measure the rpm.
 }
 FlywheelData;
 
