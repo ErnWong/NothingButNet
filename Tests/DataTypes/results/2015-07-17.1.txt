@@ -1,0 +1,29 @@
+
+
+Powered by PROS 2b10
+
+This is a BETA version of PROS and may have issues.
+
+
+
+Purdue Robotics OS (C)2011-2014 Purdue ACM SIGBOTS
+
+This program has ABSOLUTELY NO WARRANTY, not even an implied
+
+warranty of MERCHANTABILITY or FITNESS FOR A PARTIPURPOSE.
+
+
+
+ Data Types Test
+=================
+
+bool    sizeof = 1
+char    sizeof = 1
+short   sizeof = 2
+long    sizeof = 4
+int     sizeof = 4
+float   sizeof = 4
+double  sizeof = 8
+void *  sizeof = 4
+size_t  sizeof = 4
+
