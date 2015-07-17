@@ -1,0 +1,76 @@
+
+Powered by PROS 2b10
+
+This is a BETA version of PROS and may have issues.
+
+
+
+Purdue Robotics OS (C)2011-2014 Purdue ACM SIGBOTS
+
+This program has ABSOLUTELY NO WARRANTY, not even an implied
+
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICURPOSE.
+
+
+
+
+
+Give me a character.
+
+
+
+I got a ' '.
+
+[beep]
+
+I will getchar in...
+
+
+
+10
+
+[boop][beep][boop][beep][boop][beep][boop]
+
+9
+
+[beep][boop][beep][boop][beep][boop][beep][boop]
+
+8
+
+[beep][boop][beep][boop][beep][boop][beep][boop]
+
+7
+
+[beep][boop][beep][boop][beep][boop][beep][boop]
+
+6
+
+[beep][boop][beep][boop][beep][boop][beep][boop]
+
+5
+
+[beep][boop][beep][boop][beep][boop][beep][boop]
+
+4
+
+[beep][boop][beep][boop][beep][boop][beep][boop]
+
+3
+
+[beep][boop][beep][boop][beep][boop][beep][boop]
+
+2
+
+[beep][boop][beep][boop][beep][boop][beep][boop]
+
+1
+
+[beep][boop][beep][boop][beep][boop][beep][boop]
+
+Give me a character.
+
+[beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop]
+
+I got a 'a'.
+
+[beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop][beep][boop]
