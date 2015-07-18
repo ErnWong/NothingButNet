@@ -10,7 +10,7 @@ extern "C" {
 void stdinHandlerRun();
 
 
-	// End C++ export structure
+// End C++ export structure
 #ifdef __cplusplus
 }
 #endif

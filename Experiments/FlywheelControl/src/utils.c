@@ -1,7 +1,7 @@
 #include "utils.h"
 
 #include <API.h>
-#include <ctype.h>
+//#include <ctype.h>
 #include <string.h>
 
 
@@ -40,6 +40,36 @@ bool stringStartsWith(char const *pre, char const *string)
 	}
 }
 
+//http://stackoverflow.com/questions/4392665/converting-string-to-float-without-atof-in-c
+// And, using atof makes the linker complain about _sbrk not defined, so the lazy way is to write custom atof:
+float stringToFloat(const char* string)
+{
+	float rez = 0, factor = 1;
+	if (*string == '-')
+	{
+		string++;
+		factor = -1;
+	}
+	for (int pointSeen = 0; *string; string++)
+	{
+		if (*string == '.')
+		{
+			pointSeen = 1;
+			continue;
+		}
+		int digit = *string - '0';
+		if (digit >= 0 && digit <= 9)
+		{
+			if (pointSeen) {
+				factor /= 10.0f;
+			}
+			rez = rez * 10.0f + (float)digit;
+		}
+	}
+	return rez * factor;
+};
+
+#if 0
 bool stringCaseInsensitiveStartsWith(char const *pre, char const *string)
 {
 	size_t stringLength = strlen(string);
@@ -67,3 +97,4 @@ int stringCaseInsensitiveCompare(char const *a, char const *b, size_t maxCount)
 	}
 	return 0;
 }
+#endif

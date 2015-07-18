@@ -1,3 +1,5 @@
+
+
 #include "main.h"
 
 #include <API.h>
@@ -86,7 +88,7 @@ void handleRequest(const HandlerMap *api, const size_t apiSize, char const *requ
 		{
 			continue;
 		}
-		if (!isspace((unsigned char)request[keyLength]))
+		if (isspace((unsigned char)request[keyLength]))
 		{
 			continue;
 		}
@@ -107,17 +109,17 @@ void handleSet(char const *request)
 
 void handleSetFlywheelFloat(char const *request, FlywheelFloatAcceptor accept)
 {
-	float value = atof(request);
+	float value = stringToFloat(request);
 	accept(flywheel, value);//TODO check request
 }
 
 void handleSetFlywheelBool(char const *request, FlywheelBoolAcceptor accept)
 {
-	if (stringCaseInsensitiveStartsWith("true", request))
+	if (stringStartsWith("true", request))
 	{
 		accept(flywheel, true);
 	}
-	else if (stringCaseInsensitiveStartsWith("false", request))
+	else if (stringStartsWith("false", request))
 	{
 		accept(flywheel, false);
 	}

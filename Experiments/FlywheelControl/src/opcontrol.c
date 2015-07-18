@@ -35,7 +35,9 @@
 #include "main.h"
 #include "com-input.h"
 #include "flywheel.h"
+#include "utils.h"
 
+void streamOutTask(void *args);
 
 /*
  * Runs the user operator control code. This function will be started in its own task with the
@@ -59,10 +61,25 @@ void operatorControl()
 {
 	flywheelRun(flywheel);
 	stdinHandlerRun();
+	taskCreate(streamOutTask, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
 	while (1)
 	{
+		float targetRPM = joystickGetDigital(1, 7, JOY_UP) ? 30 : 0;
+		flywheelSet(flywheel, targetRPM);
 		delay(20);
 	}
 }
 
-
+void streamOutTask(void *args)
+{
+	while (1)
+	{
+		printf(
+			"Data %f %f %f \n",
+			flywheel->measured,
+			flywheel->target,
+			flywheel->action
+		);
+		delay(40);
+	}
+}

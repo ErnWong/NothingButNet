@@ -17,12 +17,15 @@ float timeUpdate(unsigned long *microTime);
 
 int signOf(int x);
 
-bool stringStartsWith(char const *pre, char const *string);
+float stringToFloat(const char* string);
 
+bool stringStartsWith(char const *pre, char const *string);
+/*
 bool stringCaseInsensitiveStartsWith(char const *pre, char const *string);
 
 int stringCaseInsensitiveCompare(char const *a, char const *b, size_t maxCount);
 
+*/
 
 // TODO: Move these ticks per rev to somewhere meaningful.
 

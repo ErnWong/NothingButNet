@@ -75,6 +75,8 @@ Flywheel *flywheelInit(FlywheelSetup setup)
 	flywheel->delay = FLYWHEEL_READY_DELAY;
 	flywheel->allowReadify = true;
 
+	flywheel->controllerType = CONTROLLER_TYPE_PID;
+
 	flywheel->targetMutex = mutexCreate();
 	flywheel->task = NULL;
 	//flywheel->task = taskCreate(task, 1000000, flywheel, FLYWHEEL_READY_PRIORITY);	// TODO: What stack size should be set?
@@ -192,7 +194,7 @@ void measureRpm(Flywheel *flywheel, float timeChange)
 	int ticks = reading - flywheel->reading;
 
 	// Raw rpm
-	float rpm = ticks / flywheel->encoderTicksPerRevolution * flywheel->gearing / timeChange;
+	float rpm = ticks / flywheel->encoderTicksPerRevolution * flywheel->gearing / timeChange * 60;
 
 	// Low-pass filter
 	float measureChange = (rpm - flywheel->measured) * timeChange / flywheel->smoothing;
