@@ -33,6 +33,9 @@
  */
 
 #include "main.h"
+#include "flywheel.h"
+
+Flywheel *flywheel;
 
 /*
  * Runs pre-initialization code. This function will be started in kernel mode one time while the
@@ -58,5 +61,23 @@ void initializeIO() {
  * will not start. An autonomous mode selection menu like the pre_auton() in other environments
  * can be implemented in this task if desired.
  */
-void initialize() {
+void initialize()
+{
+	FlywheelSetup flywheelSetup =
+	{
+		.gearing = 5,
+		.pidKp = 2,
+		.pidKi = 2,
+		.pidKd = 2,
+		.tbhGain = 2,
+		.tbhApprox = 2,
+		.bangBangValue = 20,
+		.smoothing = 1,
+		.encoderTicksPerRevolution = 360,
+		.encoderPortTop = 1,
+		.encoderPortBottom = 2,
+		.encoderReverse = false,
+		.motorChannels = {1, 2, 3}
+	};
+	flywheel = flywheelInit(flywheelSetup);
 }

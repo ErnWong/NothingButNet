@@ -6,9 +6,18 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0BE4B568-741C-4C82-8939-968DFDDB38C7}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		Experiments\README.md = Experiments\README.md
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Robot", "Robot\Robot.vcxproj", "{E31065EC-B30E-455A-8CA8-5EC20D692E80}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataTypes", "Experiments\DataTypes\DataTypes.vcxproj", "{8541AC80-44ED-4BD6-97FD-A0D0B556C70A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FlywheelControl", "Experiments\FlywheelControl\FlywheelControl.vcxproj", "{92D746D8-BDC3-458D-89BD-32C468DD6247}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BlockingIO", "Experiments\BlockingIO\BlockingIO.vcxproj", "{AD4CB48B-3A52-46A7-9433-09836B57FFF2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Motors", "Experiments\Motors\Motors.vcxproj", "{10F89C05-2918-4706-84DE-ECAE10B625AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +29,22 @@ Global
 		{E31065EC-B30E-455A-8CA8-5EC20D692E80}.Debug|x86.Build.0 = Debug|Win32
 		{E31065EC-B30E-455A-8CA8-5EC20D692E80}.Release|x86.ActiveCfg = Release|Win32
 		{E31065EC-B30E-455A-8CA8-5EC20D692E80}.Release|x86.Build.0 = Release|Win32
+		{8541AC80-44ED-4BD6-97FD-A0D0B556C70A}.Debug|x86.ActiveCfg = Debug|Win32
+		{8541AC80-44ED-4BD6-97FD-A0D0B556C70A}.Debug|x86.Build.0 = Debug|Win32
+		{8541AC80-44ED-4BD6-97FD-A0D0B556C70A}.Release|x86.ActiveCfg = Release|Win32
+		{8541AC80-44ED-4BD6-97FD-A0D0B556C70A}.Release|x86.Build.0 = Release|Win32
+		{92D746D8-BDC3-458D-89BD-32C468DD6247}.Debug|x86.ActiveCfg = Debug|Win32
+		{92D746D8-BDC3-458D-89BD-32C468DD6247}.Debug|x86.Build.0 = Debug|Win32
+		{92D746D8-BDC3-458D-89BD-32C468DD6247}.Release|x86.ActiveCfg = Release|Win32
+		{92D746D8-BDC3-458D-89BD-32C468DD6247}.Release|x86.Build.0 = Release|Win32
+		{AD4CB48B-3A52-46A7-9433-09836B57FFF2}.Debug|x86.ActiveCfg = Debug|Win32
+		{AD4CB48B-3A52-46A7-9433-09836B57FFF2}.Debug|x86.Build.0 = Debug|Win32
+		{AD4CB48B-3A52-46A7-9433-09836B57FFF2}.Release|x86.ActiveCfg = Release|Win32
+		{AD4CB48B-3A52-46A7-9433-09836B57FFF2}.Release|x86.Build.0 = Release|Win32
+		{10F89C05-2918-4706-84DE-ECAE10B625AB}.Debug|x86.ActiveCfg = Debug|Win32
+		{10F89C05-2918-4706-84DE-ECAE10B625AB}.Debug|x86.Build.0 = Debug|Win32
+		{10F89C05-2918-4706-84DE-ECAE10B625AB}.Release|x86.ActiveCfg = Release|Win32
+		{10F89C05-2918-4706-84DE-ECAE10B625AB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

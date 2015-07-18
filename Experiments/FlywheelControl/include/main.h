@@ -44,6 +44,7 @@
 #define MAIN_H_
 
 #include <API.h>
+#include "flywheel.h"
 
 // Allow usage of this file in C++ programs
 #ifdef __cplusplus
@@ -111,6 +112,9 @@ void initialize();
  * This task should never exit; it should end with some kind of infinite loop, even if empty.
  */
 void operatorControl();
+
+extern Flywheel *flywheel;
+//Flywheel *flywheel = NULL;
 
 // End C++ export structure
 #ifdef __cplusplus
