@@ -36,6 +36,7 @@
 #include "com-input.h"
 #include "flywheel.h"
 #include "utils.h"
+#include <string.h>
 
 void streamOutTask(void *args);
 
@@ -61,12 +62,11 @@ void operatorControl()
 {
 	flywheelRun(flywheel);
 	stdinHandlerRun();
+
 	taskCreate(streamOutTask, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
 	while (1)
 	{
-		float targetRPM = joystickGetDigital(1, 7, JOY_UP) ? 30 : 0;
-		flywheelSet(flywheel, targetRPM);
-		delay(20);
+		delay(1000);
 	}
 }
 
@@ -75,11 +75,14 @@ void streamOutTask(void *args)
 	while (1)
 	{
 		printf(
-			"Data %f %f %f \n",
+			"Data %f %f %f %f %f %f \n",
+			flywheel->microTime / 1000000.0f,
+			flywheel->measuredRaw,
 			flywheel->measured,
 			flywheel->target,
+			flywheel->error,
 			flywheel->action
 		);
-		delay(40);
+		delay(80);
 	}
 }

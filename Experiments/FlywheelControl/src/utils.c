@@ -29,7 +29,7 @@ int signOf(int x)
 bool stringStartsWith(char const *pre, char const *string)
 {
 	size_t stringLength = strlen(string);
-	size_t preLength = strlen(string);
+	size_t preLength = strlen(pre);
 	if (stringLength < preLength)
 	{
 		return false;

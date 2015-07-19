@@ -43,6 +43,8 @@ HandlerMap methods[1] =
 	{ "Set", handleSet }
 };
 
+#define METHODS_API_SIZE 1
+
 HandlerMap setters[9] =
 {
 	{ "target", handleSetTarget },
@@ -55,6 +57,8 @@ HandlerMap setters[9] =
 	{ "TBH.approx", handleSetTbhApprox },
 	{ "allow-readify", handleSetAllowReadify }
 };
+
+#define SETTERS_API_SIZE 9
 
 
 
@@ -69,9 +73,12 @@ void stdinHandler()
 	char request[128];
 	while (1)
 	{
+		//printf("Debug I am pending input from YOU.\nDebug   ^_^    \n");
 		fgets(request, 128, stdin);
-		handleRequest(methods, sizeof(methods), request);
-		delay(20);
+		//printf("Debug Hi I got a request. Lets see what it is...\n");
+		//printf("Debug Request: '%s'\n", request);
+		handleRequest(methods, METHODS_API_SIZE, request);
+		delay(40);
 	}
 }
 
@@ -86,30 +93,37 @@ void handleRequest(const HandlerMap *api, const size_t apiSize, char const *requ
 		keyLength = strlen(api[i].key);
 		if (!(stringStartsWith(api[i].key, request) && requestLength > keyLength))
 		{
+			//printf("Debug Not a %s request.\n", api[i].key);
 			continue;
 		}
-		if (isspace((unsigned char)request[keyLength]))
+		if (!isspace((unsigned char)request[keyLength]))
 		{
+			//printf("Debug Not a %s request.\n", api[i].key);
 			continue;
 		}
+		//printf("Debug %s request.\n", api[i].key);
 		int spaces = 0;
 		while (isspace((unsigned char)request[keyLength + spaces]))
 		{
 			++spaces;
 		}
+		//printf("Debug Gottit, passing the request down.\n");
 		api[i].handler(request + keyLength + spaces);
+		break;
 	}
 }
 
 void handleSet(char const *request)
 {
-	handleRequest(setters, sizeof(setters), request);
+	handleRequest(setters, SETTERS_API_SIZE, request);
 }
 
 
 void handleSetFlywheelFloat(char const *request, FlywheelFloatAcceptor accept)
 {
 	float value = stringToFloat(request);
+	//printf("Debug String to float:\n");
+	//printf("Debug %s --> %f\n", request, value);
 	accept(flywheel, value);//TODO check request
 }
 

@@ -23,6 +23,7 @@ typedef struct Flywheel		// TODO: look at packing and alignment
 
 	float target;                       // Target speed in rpm.
 	float measured;                     // Measured speed in rpm.
+	float measuredRaw;
 	float derivative;                   // Rate at which the measured speed had changed.
 	float integral;
 	float error;                        // Difference in the target and the measured speed in rpm.
@@ -56,6 +57,7 @@ typedef struct Flywheel		// TODO: look at packing and alignment
 	TaskHandle task;                    // Handle to the controlling task.
 	Encoder encoder;                    // Encoder used to measure the rpm.
 	unsigned char motorChannels[4];
+	bool motorReversed[4];
 }
 Flywheel;
 
@@ -74,6 +76,7 @@ typedef struct FlywheelSetup
 	unsigned char encoderPortBottom;    // Digital port number where the encoder's bottom wire is connected. 
 	unsigned char motorChannels[4];
 	bool encoderReverse;                // Whether the encoder values should be reversed.
+	bool motorReversed[4];
 }
 FlywheelSetup;
 

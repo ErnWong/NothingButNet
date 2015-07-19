@@ -48,6 +48,7 @@ Flywheel *flywheelInit(FlywheelSetup setup)
 
 	flywheel->target = 0.0f;
 	flywheel->measured = 0.0f;
+	flywheel->measured = 0.0f;
 	flywheel->derivative = 0.0f;
 	flywheel->integral = 0.0f;
 	flywheel->error = 0.0f;
@@ -85,6 +86,10 @@ Flywheel *flywheelInit(FlywheelSetup setup)
 	flywheel->motorChannels[1] = setup.motorChannels[1];
 	flywheel->motorChannels[2] = setup.motorChannels[2];
 	flywheel->motorChannels[3] = setup.motorChannels[3];
+	flywheel->motorReversed[0] = setup.motorReversed[0];
+	flywheel->motorReversed[1] = setup.motorReversed[1];
+	flywheel->motorReversed[2] = setup.motorReversed[2];
+	flywheel->motorReversed[3] = setup.motorReversed[3];
 
 	return flywheel;
 }
@@ -99,6 +104,8 @@ void flywheelReset(Flywheel *flywheel)
 	flywheel->lastAction = 0.0f;
 	flywheel->lastError = 0.0f;
 	flywheel->firstCross = true;
+	flywheel->reading = 0;
+	encoderReset(flywheel->encoder);
 }
 
 // Sets target RPM.
@@ -112,6 +119,8 @@ void flywheelSet(Flywheel *flywheel, float rpm)
 	{
 		activate(flywheel);
 	}
+
+	//printf("Debug Target set to %f rpm.\n", rpm);
 }
 
 void flywheelSetController(Flywheel *flywheel, ControllerType type)
@@ -127,6 +136,7 @@ void flywheelSetSmoothing(Flywheel *flywheel, float smoothing)
 void flywheelSetPidKp(Flywheel *flywheel, float gain)
 {
 	flywheel->pidKp = gain;
+	//printf("Debug pidKp set to %f.\n", gain);
 }
 void flywheelSetPidKi(Flywheel *flywheel, float gain)
 {
@@ -201,6 +211,7 @@ void measureRpm(Flywheel *flywheel, float timeChange)
 
 	// Update
 	flywheel->reading = reading;
+	flywheel->measuredRaw = rpm;
 	flywheel->measured += measureChange;
 	flywheel->derivative = measureChange / timeChange;
 
@@ -224,6 +235,14 @@ void controllerUpdate(Flywheel *flywheel, float timeChange)
 	case CONTROLLER_TYPE_BANG_BANG:
 		bangBangUpdate(flywheel, timeChange);
 		break;
+	}
+	if (flywheel->action > 127)
+	{
+		flywheel->action = 127;
+	}
+	if (flywheel->action < -127)
+	{
+		flywheel->action = -127;
 	}
 }
 
@@ -274,7 +293,8 @@ void updateMotor(Flywheel *flywheel)
 {
 	for (int i = 0; flywheel->motorChannels[i]; i++)
 	{
-		motorSet(flywheel->motorChannels[i], flywheel->action);
+		int action = flywheel->motorReversed[i]? -flywheel->action : flywheel->action;
+		motorSet(flywheel->motorChannels[i], action);
 	}
 }
 

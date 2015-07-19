@@ -18,6 +18,7 @@ Serial serialPort; // Serial port object
 
 // interface stuff
 ControlP5 cp5;
+ControlFrame cf;
 
 // Settings for the plotter are saved in this file
 JSONObject plotterConfigJSON;
@@ -52,6 +53,9 @@ void setup() {
   // gui
   cp5 = new ControlP5(this);
   
+  // extra control panel frame
+  cf = addControlFrame("Robot Tuner", 500, 650);
+  
   // init charts
   setChartSettings();
   for (int i=0; i<barChartValues.length; i++) {
@@ -70,7 +74,6 @@ void setup() {
   if (!mockupSerial) {
     //String serialPortName = Serial.list()[3];
     serialPort = new Serial(this, serialPortName, 115200);
-    serialPort.write(' ');
   }
   else
     serialPort = null;
@@ -112,20 +115,35 @@ void setup() {
   cp5.addToggle("lgVisible4").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible4"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[3]);
   cp5.addToggle("lgVisible5").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible5"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[4]);
   cp5.addToggle("lgVisible6").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible6"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[5]);
+  
+  cp5.addButton("start").setPosition(x, y=y+40).setValue(1);
+  cp5.addButton("stop").setPosition(x, y=y+40).setValue(1);
 }
 
+/*void serialEvent(Serial p) {
+  try {
+    String message = trim(p.readString());
+    String[] parts = split(message, ' ');
+    if (!(trim(parts[0]).equals("Data"))) {
+      println(message);
+      return;
+    }
+    //println("Data!");
+    dataString = join(subset(parts, 1), " ");
+    
+  }
+  catch(Exception e) {
+    
+  }
+}*/
+
 byte[] inBuffer = new byte[200]; // holds serial message
-boolean previousDeleted = false;
+String partial = "";
 int i = 0; // loop variable
 void draw() {
   /* Read serial and update values */
   if (mockupSerial || serialPort.available() > 0) {
     String myString = "";
-    if (!previousDeleted && !mockupSerial) {
-      serialPort.clear();
-      previousDeleted = true;
-      return;
-    }
     if (!mockupSerial) {
       try {
         serialPort.readBytesUntil('\n', inBuffer);
@@ -133,17 +151,24 @@ void draw() {
       catch (Exception e) {
       }
       myString = new String(inBuffer);
+      myString = partial + myString;
+      if (split(myString, ' ').length < 7) {
+        partial = myString;
+        return;
+      }
+      partial = "";
     }
     else {
       myString = mockupSerialFunction();
     }
-
-    //println(myString);
-
-    // split the string at delimiter (space)
-    String[] nums = split(myString, ' ');
-    
     // count number of bars and line graphs to hide
+    String[] tokens = split(myString, ' ');
+    String[] nums = subset(tokens, 1);
+    
+    if (recording) {
+      recordEntry(float(nums[0]), float(nums[1]), float(nums[2]), float(nums[3]), float(nums[4]), float(nums[5]));
+    }
+    
     int numberOfInvisibleBars = 0;
     for (i=0; i<6; i++) {
       if (int(getPlotterConfigString("bcVisible"+(i+1))) == 0) {
@@ -223,11 +248,70 @@ void setChartSettings() {
   LineGraph.yMin=int(getPlotterConfigString("lgMinY"));
 }
 
+Table table;
+Boolean recording = false;
+void startRecording() {
+  println("RECORING");
+  table = new Table();
+  table.addColumn("time");
+  table.addColumn("target");
+  table.addColumn("measured");
+  table.addColumn("raw");
+  table.addColumn("action");
+  table.addColumn("error");
+  table.addColumn("controller");
+  table.addColumn("PID.Kp");
+  table.addColumn("PID.Ki");
+  table.addColumn("PID.Kd");
+  table.addColumn("TBH.gain");
+  table.addColumn("TBH.approx");
+  table.addColumn("allow-readify");
+  recording = true;
+}
+
+String settingsController;
+float settingsPidKp;
+float settingsPidKi;
+float settingsPidKd;
+float settingsTbhGain;
+float settingsTbhApprox;
+float settingsAllowReadify;
+
+void recordEntry(float time, float raw, float measured, float target, float error, float action) {
+  TableRow row = table.addRow();
+  row.setFloat("time", time);
+  row.setFloat("target", target);
+  row.setFloat("measured", measured);
+  row.setFloat("raw", raw);
+  row.setFloat("action", action);
+  row.setFloat("error", error);
+  
+  row.setString("controller", settingsController);
+  row.setFloat("PID.Kp", settingsPidKp);
+  row.setFloat("PID.Ki", settingsPidKi);
+  row.setFloat("PID.Kd", settingsPidKd);
+  row.setFloat("TBH.gain", settingsTbhGain);
+  row.setFloat("TBH.approx", settingsTbhApprox);
+  row.setFloat("allow-readify", settingsAllowReadify);
+}
+
+void endRecording() {
+    println("SAVING");
+  recording = false;
+  saveTable(table, "../results/plsnameme.csv", "csv" );
+}
+
 // handle gui actions
 void controlEvent(ControlEvent theEvent) {
+  
   if (theEvent.isAssignableFrom(Textfield.class) || theEvent.isAssignableFrom(Toggle.class) || theEvent.isAssignableFrom(Button.class)) {
     String parameter = theEvent.getName();
     String value = "";
+    if (parameter.equals("start"))
+      startRecording();
+    if (parameter.equals("stop"))
+      endRecording();
+    println(theEvent);
     if (theEvent.isAssignableFrom(Textfield.class))
       value = theEvent.getStringValue();
     else if (theEvent.isAssignableFrom(Toggle.class) || theEvent.isAssignableFrom(Button.class))

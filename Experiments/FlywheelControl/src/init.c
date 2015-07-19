@@ -65,19 +65,20 @@ void initialize()
 {
 	FlywheelSetup flywheelSetup =
 	{
-		.gearing = 5,
-		.pidKp = 2,
-		.pidKi = 2,
-		.pidKd = 2,
-		.tbhGain = 2,
-		.tbhApprox = 2,
+		.gearing = 5.0f,
+		.pidKp = 0.0f,
+		.pidKi = 0.0f,
+		.pidKd = 0.0f,
+		.tbhGain = 0.0f,
+		.tbhApprox = 20,
 		.bangBangValue = 20,
-		.smoothing = 1,
+		.smoothing = 0.2f,
 		.encoderTicksPerRevolution = 360,
 		.encoderPortTop = 1,
 		.encoderPortBottom = 2,
 		.encoderReverse = false,
-		.motorChannels = {1, 2, 3}
+		.motorChannels = { 1, 2, 3 },
+		.motorReversed = { true, true, false }
 	};
 	flywheel = flywheelInit(flywheelSetup);
 }
